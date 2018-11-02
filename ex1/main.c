@@ -7,6 +7,18 @@ int main() {
 
 	createDB();
 
+	Airplane* a1 = (Airplane*)malloc(sizeof(Airplane));
+	Airplane2* a2 = (Airplane2*)malloc(sizeof(Airplane2));
+	int retVal = GetAirplaneType(&a1, "Larnaca");
+	printAirplane(a1);
+	printf("retval: %d\n", retVal);
+
+	if (!CreateAirplaneList(&a2)) {
+		for (int i = 0; i < LIST_SIZE; i++) {
+			printAirplane2(a2);
+			a2 = a2->nextAirplane;
+		}
+	}
 }
 
 void createDB()
