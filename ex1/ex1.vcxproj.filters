@@ -21,12 +21,18 @@
     <ClCompile Include="airplane_db.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pilots.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="airplane_db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pilots.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -160,6 +160,7 @@ void printAirplane2(Airplane2* airplane2) {
 }
 
 int DeleteAirplane(Airplane2** head, Airplane2* toDelete) { //TODO: check if needed to release memory or not
+	int tempListSize = findListSize(*head);
 	Airplane2* currentAirplane = *head;
 	//if delete the head
 	if (areSameAirplane(currentAirplane, toDelete)) {
@@ -167,7 +168,7 @@ int DeleteAirplane(Airplane2** head, Airplane2* toDelete) { //TODO: check if nee
 		freeAirplaneMem(currentAirplane);
 		return 0;
 	}
-	for(int i = 1; i < LIST_SIZE; i++) {
+	for (int i = 1; i < tempListSize; i++) {
 		if (areSameAirplane(currentAirplane->nextAirplane, toDelete)) {
 			Airplane2* ptrToFree = currentAirplane->nextAirplane;
 			currentAirplane->nextAirplane = currentAirplane->nextAirplane->nextAirplane;
@@ -185,9 +186,11 @@ bool areSameAirplane(Airplane2* a1, Airplane2* a2) { //TODO: is needed to compar
 
 void ClearAirplaneList(Airplane2* head) { //TODO: finish
 	Airplane2* currentAirplane = head;
-	Airplane2* ptrToFree = currentAirplane;
-	for (int i = 0; i < LIST_SIZE; i++) {
+	Airplane2* ptrToFree;
+	for (int i = 0; i < findListSize(head); i++) {
+		ptrToFree = currentAirplane;
 		currentAirplane = currentAirplane->nextAirplane;
+		free(ptrToFree);
 	}
 }
 
@@ -196,7 +199,13 @@ void freeAirplaneMem(Airplane2* airplane) {
 	free(airplane);
 }
 
-int findListSize(Airplane2* airplane) { //TODO: finish
+int findListSize(Airplane2* head) {
+	Airplane2* current = head;
+	int size = 1;
+	while (current != NULL) {
+		current = current->nextAirplane;
+		size++;
+	}
 	return 0;
 }
 

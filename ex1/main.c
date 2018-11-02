@@ -16,6 +16,8 @@ int main() {
 	if (!CreateAirplaneList(&a2)) {
 		for (int i = 0; i < LIST_SIZE; i++) {
 			printAirplane2(a2);
+			printf("         |          \n");
+			printf("         V          \n");
 			a2 = a2->nextAirplane;
 		}
 	}
