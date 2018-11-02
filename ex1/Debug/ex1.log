@@ -1,1 +1,11 @@
-﻿  ex1.vcxproj -> C:\Users\michael\source\repos\ex1\Debug\ex1.exe
+﻿  airplane_db.c
+  main.c
+  pilots.c
+c:\users\michael\source\repos\ex1\ex1\pilots.c(26): warning C4047: 'function': 'int' differs in levels of indirection from 'char *'
+c:\users\michael\source\repos\ex1\ex1\pilots.c(26): warning C4024: 'createPilot': different types for formal and actual parameter 3
+c:\users\michael\source\repos\ex1\ex1\pilots.c(79): warning C4090: '=': different 'const' qualifiers
+c:\users\michael\source\repos\ex1\ex1\pilots.c(89): warning C4090: '=': different 'const' qualifiers
+c:\users\michael\source\repos\ex1\ex1\pilots.c(108): warning C4090: '=': different 'const' qualifiers
+c:\users\michael\source\repos\ex1\ex1\pilots.c(132): warning C4013: 'areSameAirplane' undefined; assuming extern returning int
+  Generating Code...
+  ex1.vcxproj -> C:\Users\michael\source\repos\ex1\Debug\ex1.exe

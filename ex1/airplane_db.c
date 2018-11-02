@@ -1,7 +1,6 @@
 #include "airplane_db.h"
 
 
-
 Airplane* createAirplane(char* type, char** destinations, int dest_size) {
 
 	//allocate size for Airplane
@@ -190,10 +189,9 @@ void ClearAirplaneList(Airplane2* head) { //TODO: finish
 	for (int i = 0; i < findListSize(head); i++) {
 		ptrToFree = currentAirplane;
 		currentAirplane = currentAirplane->nextAirplane;
-		free(ptrToFree);
+		freeAirplaneMem(ptrToFree);
 	}
 }
-
 
 void freeAirplaneMem(Airplane2* airplane) {
 	free(airplane->name);
@@ -208,7 +206,7 @@ int findListSize(Airplane2* head) {
 		current = current->nextAirplane;
 		size++;
 	}
-	return 0;
+	return size;
 }
 
 
