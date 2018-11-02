@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "airplane_db.h"
 #include "main.h"
+#include "pilots.h"
 
 int main() {
 
@@ -21,6 +22,8 @@ int main() {
 			a2 = a2->nextAirplane;
 		}
 	}
+
+	GetPilots("Pilots1.txt");
 }
 
 void createDB()

@@ -1,3 +1,1 @@
-﻿  airplane_db.c
-c:\users\michael\source\repos\ex1\ex1\airplane_db.c(163): warning C4716: 'DeleteAirplane': must return a value
-  ex1.vcxproj -> C:\Users\michael\source\repos\ex1\Debug\ex1.exe
+﻿  ex1.vcxproj -> C:\Users\michael\source\repos\ex1\Debug\ex1.exe

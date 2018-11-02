@@ -49,18 +49,18 @@ int GetAirplaneType(Airplane** airplane, char* destination) {
 Airplane2* createAirplane2(char* name, char* type, double age) {
 
 	//allocate size for Airplane
-	Airplane2* airplane_t_2 = (Airplane2*)malloc(sizeof(Airplane2));
-
+	Airplane2* airplane2 = (Airplane2*)malloc(sizeof(Airplane2));
+	//allocate size for fields
+	int nameLength = strlen(name);
+	airplane2->name = (char*)malloc(sizeof(char)*(nameLength));
+	airplane2->type = (char*)malloc(sizeof(char) * 3);
 	//set name
-	airplane_t_2->name = name;
-
-	//copies model name to new airplane created. TODO: check if this is ok
-	airplane_t_2->type = type;
-
+	strcpy_s(airplane2->name, nameLength+1, name);
+	//copies model name to new airplane created.
+	strcpy_s(airplane2->type, 4, type);
 	//set age
-	airplane_t_2->age = age;
-
-	return airplane_t_2;
+	airplane2->age = age;
+	return airplane2;
 }
 
 //part 4
@@ -181,7 +181,7 @@ int DeleteAirplane(Airplane2** head, Airplane2* toDelete) { //TODO: check if nee
 
 
 bool areSameAirplane(Airplane2* a1, Airplane2* a2) { //TODO: is needed to compare next airplane?
-	return a1->age == a2->age && !strcmp(a1->name, a2->name) && !strcomp(a1->type, a2->type);
+	return a1->age == a2->age && !strcmp(a1->name, a2->name) && !strcmp(a1->type, a2->type);
 }
 
 void ClearAirplaneList(Airplane2* head) { //TODO: finish
@@ -196,6 +196,8 @@ void ClearAirplaneList(Airplane2* head) { //TODO: finish
 
 
 void freeAirplaneMem(Airplane2* airplane) {
+	free(airplane->name);
+	free(airplane->type);
 	free(airplane);
 }
 
