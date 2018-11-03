@@ -1,6 +1,6 @@
 #include "pilots.h"
 
-int GetPilots(Pilot** head,char* path) {
+int GetPilots(Pilot** head, char* path) {
 	*head = NULL;
 	Pilot* current = NULL;
 	if (path == NULL) {
@@ -17,13 +17,12 @@ int GetPilots(Pilot** head,char* path) {
 		return -1;
 	}
 	while ((read = fgets(line, len, fp)) != NULL) {
-		//printf("Retrieved line: %s\n", read);
 		char** arr;
 		splitPilotLine(read, ',', &arr);
-		char* rank = arr[3]+1;
+		char* rank = arr[3] + 1;
 		char* ptr = strchr(arr[3], '\n');
 		*ptr = '\0';
-		Pilot* pilot = createPilot(arr[0], arr[1] + 1, arr[2] + 1, rank);
+		Pilot* pilot = createPilot(arr[0], arr[1] + 1, atoi(arr[2] + 1), rank);
 		if (*head != NULL) {
 			current->nextPilot = pilot;
 			current = current->nextPilot;
@@ -32,12 +31,8 @@ int GetPilots(Pilot** head,char* path) {
 			*head = pilot;
 			current = pilot;
 		}
-		/*printf(pilot->name);
-		printf(pilot->type);
-		printf(pilot->flightHours);
-		printf(pilot->rank);*/
-
 	}
+	current->nextPilot = NULL;
 	fclose(fp);
 	if (line) {
 		free(line);
@@ -58,11 +53,7 @@ Pilot* createPilot(char* name, char* type, int flightHours, char* rank)
 	return pilot;
 }
 
-void freePilotSpace(Pilot * pilot)
-{
-	free(pilot->name);
-	free(pilot->rank);
-	free(pilot->type);
+void freePilotSpace(Pilot * pilot) {
 	free(pilot);
 }
 
@@ -125,11 +116,11 @@ int splitPilotLine(const char *str, char c, char ***arr)
 	return count;
 }
 
-int DeletePilots(Pilot ** head, Pilot * toDelete){
+int DeletePilots(Pilot ** head, Pilot * toDelete) {
 	int tempListSize = findPilotListSize(*head);
 	Pilot* currentPilot = *head;
 	//if delete the head
-	if (areSameAirplane(currentPilot, toDelete)) {
+	if (areSamePilot(currentPilot, toDelete)) {
 		(*head) = (*head)->nextPilot;
 		freePilotSpace(currentPilot);
 		return 0;
@@ -141,15 +132,16 @@ int DeletePilots(Pilot ** head, Pilot * toDelete){
 			freePilotSpace(ptrToFree);
 			return 0;
 		}
+		currentPilot = currentPilot->nextPilot;
 	}
 	return -1;
 }
 
-int findPilotListSize(Pilot * head)
+int findPilotListSize(Pilot* head)
 {
 	Pilot* current = head;
 	int size = 1;
-	while (current != NULL) {
+	while (current->nextPilot != NULL) {
 		current = current->nextPilot;
 		size++;
 	}
@@ -158,16 +150,52 @@ int findPilotListSize(Pilot * head)
 
 bool areSamePilot(Pilot * p1, Pilot * p2)
 {
-	return p1->flightHours == p2->flightHours && !strcmp(p1->name,p2->name) && !strcmp(p1->rank,p2->rank) && !strcmp(p1->type,p2->type);
+	return p1->flightHours == p2->flightHours && !strcmp(p1->name, p2->name) && !strcmp(p1->rank, p2->rank) && !strcmp(p1->type, p2->type);
 }
 
 void ClearPilotList(Pilot * pilot)
 {
 	Pilot* currentPilot = pilot;
 	Pilot* ptrToFree;
-	for (int i = 0; i < findPilotListSize(pilot); i++) {
+	int listSize = findPilotListSize(pilot);
+	for (int i = 0; i < listSize; i++) {
 		ptrToFree = currentPilot;
 		currentPilot = currentPilot->nextPilot;
 		freePilotSpace(ptrToFree);
 	}
+}
+
+int getYoungestPilotForType(Pilot ** pilot, Pilot * head, char * type, char* rank)
+{
+	Pilot* current = head;
+
+	Pilot* minPilot = NULL;
+	int minFlightHours = INT_MAX;
+
+	if (areSameType(head->type, type) && areSameType(current->rank, rank)) {
+		minPilot = head;
+		minFlightHours = head->flightHours;
+		current = current->nextPilot;
+	}
+	int listSize = findPilotListSize(head);
+	for (int i = 1; i < listSize; i++) {
+		if (areSameType(current->type, type) && areSameType(current->rank, rank)) {
+			if (current->flightHours < minFlightHours) {
+				minPilot = current;
+				minFlightHours = current->flightHours;
+			}
+
+		}
+		current = current->nextPilot;
+	}
+	if (minPilot != NULL) {
+		*pilot = minPilot;
+		return 0;
+	}
+	return -1;
+}
+
+bool areSameType(char* type1, char * type)
+{
+	return !strcmp(type1, type);
 }

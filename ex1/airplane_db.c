@@ -1,28 +1,30 @@
 #include "airplane_db.h"
 
 
-Airplane* createAirplane(char* type, char** destinations, int dest_size) {
+int AirplanesFound[NUM_OF_OPTIONS] = { 0,0,0 };
+
+AirplaneType* createAirplane(char* type, char** destinations, int dest_size) {
 
 	//allocate size for Airplane
-	Airplane* airplane_t = (Airplane*)malloc(sizeof(Airplane));
+	AirplaneType* airplane = (AirplaneType*)malloc(sizeof(AirplaneType));
 
 	//set destination size
-	airplane_t->dest_size = dest_size;
+	airplane->dest_size = dest_size;
 
 	//copies model name to new airplane created. TODO: check if this is ok
-	airplane_t->type = type;
+	airplane->type = type;
 
 	//copy all destinations array to airplane
 	int i = 0;
 	for (i = 0; i < dest_size; i++) {
-		airplane_t->destinations[i] = (char*)malloc(sizeof(char)*strlen(destinations[i]));
-		airplane_t->destinations[i] = destinations[i];
+		airplane->destinations[i] = (char*)malloc(sizeof(char)*strlen(destinations[i]));
+		airplane->destinations[i] = destinations[i];
 	}
 
-	return airplane_t;
+	return airplane;
 }
 
-void printAirplane(Airplane* airplane) {
+void printAirplane(AirplaneType* airplane) {
 	printf("****** Airplane ******\n");
 	printf("airplane type: %s\n", airplane->type);
 	printf("airplane desttination size: %d\n", airplane->dest_size);
@@ -32,12 +34,12 @@ void printAirplane(Airplane* airplane) {
 	printf("****** end of Airplane ******\n");
 }
 
-int GetAirplaneType(Airplane** airplane, char* destination) {
+int GetAirplaneType(AirplaneType** airplane, char* destination) {
 	for (int i = 0; i < 3; i++) {
-		int dest_size = db[i].dest_size;
+		int dest_size = db[i]->dest_size;
 		for (int j = 0; j < dest_size; j++) {
-			if (!strcmp(destination, db[i].destinations[j])) {
-				*airplane = (db + i);
+			if (!strcmp(destination, db[i]->destinations[j]) && !AirplanesFound[i]) {
+				*airplane = db[i];
 				return 0;
 			}
 		}
@@ -54,7 +56,7 @@ Airplane2* createAirplane2(char* name, char* type, double age) {
 	airplane2->name = (char*)malloc(sizeof(char)*(nameLength));
 	airplane2->type = (char*)malloc(sizeof(char) * 3);
 	//set name
-	strcpy_s(airplane2->name, nameLength+1, name);
+	strcpy_s(airplane2->name, nameLength + 1, name);
 	//copies model name to new airplane created.
 	strcpy_s(airplane2->type, 4, type);
 	//set age
@@ -69,7 +71,7 @@ int CreateAirplaneList(Airplane2** airplane2) {
 	Airplane2* currentAirplane2;
 	head = createAirplane2("Beit-Shean", "737", 5);
 	currentAirplane2 = head;
-	for (int i = 1; i < LIST_SIZE; i++) {
+	for (int i = 1; i < AIRPLANE_LIST_SIZE; i++) {
 		switch (i) {
 		case 1:
 			currentAirplane2->nextAirplane = createAirplane2("Ashkelon", "737", 10.25);
@@ -125,9 +127,10 @@ int GetAirplane(Airplane2** youngestAirplane2, Airplane2* head, char* type) {
 	double minAge = DBL_MAX;
 	if (sameType(currentAirplane2, type)) {
 		*youngestAirplane2 = head;
-		double minAge = head->age;
+		minAge = head->age;
+		found = true;
 	}
-	for (int i = 1; i < LIST_SIZE; i++) {
+	for (int i = 1; i < findListSize(head); i++) {
 		if (sameType(currentAirplane2->nextAirplane, type)) {
 			double nextAirplaneAge = currentAirplane2->nextAirplane->age;
 			if (minAge > nextAirplaneAge) {
@@ -144,7 +147,7 @@ int GetAirplane(Airplane2** youngestAirplane2, Airplane2* head, char* type) {
 	return -1;
 }
 
-int sameType(Airplane2 * currentAirplane2, char * type)
+bool sameType(Airplane2 * currentAirplane2, char * type)
 {
 	return !strcmp(currentAirplane2->type, type);
 }
@@ -158,7 +161,7 @@ void printAirplane2(Airplane2* airplane2) {
 	printf("****** end of Airplane ******\n");
 }
 
-int DeleteAirplane(Airplane2** head, Airplane2* toDelete) { //TODO: check if needed to release memory or not
+int DeleteAirplane(Airplane2** head, Airplane2* toDelete) {
 	int tempListSize = findListSize(*head);
 	Airplane2* currentAirplane = *head;
 	//if delete the head
@@ -174,19 +177,21 @@ int DeleteAirplane(Airplane2** head, Airplane2* toDelete) { //TODO: check if nee
 			freeAirplaneMem(ptrToFree);
 			return 0;
 		}
+		currentAirplane = currentAirplane->nextAirplane;
 	}
 	return -1;
 }
 
 
-bool areSameAirplane(Airplane2* a1, Airplane2* a2) { //TODO: is needed to compare next airplane?
+bool areSameAirplane(Airplane2* a1, Airplane2* a2) {
 	return a1->age == a2->age && !strcmp(a1->name, a2->name) && !strcmp(a1->type, a2->type);
 }
 
-void ClearAirplaneList(Airplane2* head) { //TODO: finish
+void ClearAirplaneList(Airplane2* head) {
 	Airplane2* currentAirplane = head;
 	Airplane2* ptrToFree;
-	for (int i = 0; i < findListSize(head); i++) {
+	int listSize = findListSize(head);
+	for (int i = 0; i < listSize; i++) {
 		ptrToFree = currentAirplane;
 		currentAirplane = currentAirplane->nextAirplane;
 		freeAirplaneMem(ptrToFree);
@@ -194,14 +199,12 @@ void ClearAirplaneList(Airplane2* head) { //TODO: finish
 }
 
 void freeAirplaneMem(Airplane2* airplane) {
-	free(airplane->name);
-	free(airplane->type);
 	free(airplane);
 }
 
 int findListSize(Airplane2* head) {
 	Airplane2* current = head;
-	int size = 1;
+	int size = 0;
 	while (current != NULL) {
 		current = current->nextAirplane;
 		size++;
@@ -209,5 +212,26 @@ int findListSize(Airplane2* head) {
 	return size;
 }
 
+void updateAirPlanesFound(char* type)
+{
+	if (!strcmp(type, "737")) {
+		AirplanesFound[0] = 1;
+	}
+	else if (!strcmp(type, "747")) {
+		AirplanesFound[1] = 1;
+	}
+	else {
+		AirplanesFound[2] = 1;
+	}
+
+}
+
+void clearAirPlanesFound()
+{
+	AirplanesFound[0] = 0;
+	AirplanesFound[1] = 0;
+	AirplanesFound[2] = 0;
+
+}
 
 
