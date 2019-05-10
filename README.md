@@ -1,2 +1,2 @@
-# ex1Fun
-תרגיל בית 1 בתכנון מערכות
+# Introduction to Programming Systems ex 1
+This is the first submission 
